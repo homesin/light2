@@ -175,10 +175,11 @@
 </script>
 
 <script>
+    data.features.forEach((e,i) => {e.properties.id=i}); //add id to refer key
     var dataSource = new DevExpress.data.DataSource({
         store: {
             type: "array",
-            key: "路燈編號",
+            key: "id",
             data: data.features.map(e => e.properties).sort((a, b) => new Intl.Collator('en', {
                 numeric: true,
                 sensitivity: 'accent'
@@ -257,6 +258,7 @@
 </script>
 <script>
     var fly1 = () => {
+        map.rotateTo(-57);
         map.flyTo({
             center: [120.484074, 23.467753], //23.467753, 120.484074
             zoom: 17,
@@ -264,19 +266,19 @@
             curve: 1, // change the speed at which it zooms out
             //essential: true
         });
-        map.rotateTo(-57);
     };
     var fly2 = () => {
+        map.rotateTo(0);
         map.flyTo({
             center: [120.42438960585848, 23.54335998046743], //23.54335998046743, 120.42438960585848
             zoom: 17,
             speed: 1, // make the flying slow
             curve: 1, // change the speed at which it zooms out
             //essential: false
-        });
-        map.rotateTo(0);
+        });        
     };
     var fly3 = () => {
+        map.rotateTo(0);
         map.flyTo({
             center: [120.441996, 23.464029], //23.464029, 120.441996
             zoom: 17,
@@ -284,9 +286,9 @@
             curve: 1, // change the speed at which it zooms out
             //essential: true
         });
-        map.rotateTo(0);
     };
     var fly4 = () => {
+        map.rotateTo(0);
         map.flyTo({
             center: [120.458913, 23.488262], //23.488262, 120.458913
             zoom: 18,
@@ -294,7 +296,6 @@
             curve: 1, // change the speed at which it zooms out
             //essential: true
         });
-        map.rotateTo(0);
     };
     var pointClick = e => {
         //console.log(e.properties.pfile);
