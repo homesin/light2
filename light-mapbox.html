@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Mapbox -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css">
+    <!-- dx grid -->
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.1.4/css/dx.common.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.1.4/css/dx.light.css" />
+
+    <!-- <script src="data.js"></script> -->
+    <script src="data1.js"></script>
+    <style>
+        #map {
+            /* background-color: blue; */
+            height: 500px;
+            width: 100%;
+            /* background-color: yellow; */
+        }
+
+        #table1 {
+            /* background-color: yellow;  */
+            height: 300px;
+            width: 100%;
+            /* background-color: blue; */
+        }
+
+        #photoContainer {
+            /* background-color:red;  */
+            height: 300px;
+            width: 300px;
+            /*flex-wrap: nowrap;*/
+            /* background-color: brown; */
+        }
+
+        .photo {
+            padding: 1px;
+        }
+
+        #t1 {
+            display: none;
+        }
+
+        #t2 {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <!-- <button onclick="switch1()">圖表開關</button>
+        <button onclick="switch2()">照片開關</button> -->
+        <div class="row ">
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col">
+                        <h1>路燈查詢</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div id="gridContainer"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col">
+                        <button onclick="fly1()">蘭潭範圍</button>
+                        <button onclick="fly2()">民雄範圍</button>
+                        <button onclick="fly3()">新民範圍</button>
+                        <button onclick="fly4()">林森範圍</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div id='map'></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <h1>屬性表</h1>
+                        <table id='table1'>
+                            <thead>
+                                <tr>
+                                    <th data-field="prop">屬性</th>
+                                    <th data-field="val">值</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="col-9">
+                        <h1>現場照片</h1>
+                        <div class="d-flex flex-nowrap" id="photoContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-md">
+                <div id='map'></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" id="t1">
+                <h1>屬性表</h1>
+                <table id='table1'>
+                    <thead>
+                        <tr>
+                            <th data-field="prop">屬性</th>
+                            <th data-field="val">值</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="col-md-9" id="t2">
+                <h1>現場照片</h1>
+                <div class="d-flex flex-nowrap" id="photoContainer"></div>
+
+            </div>
+        </div> -->
+        <!-- <script>
+            var switch1 = () => {
+                var prop = document.getElementById('t1').style.display;
+                var setstatus = prop == 'block' ? 'none' : 'block';
+                document.getElementById('t1').style.display = setstatus;
+            }
+            var switch2 = () => {
+                var prop = document.getElementById('t2').style.display;
+                var setstatus = prop == 'block' ? 'none' : 'block';
+                document.getElementById('t2').style.display = setstatus;
+            }
+        </script> -->
+        <!-- Optional JavaScript; choose one of the two! -->
+
+        <!-- Option 1: Bootstrap Bundle with Popper -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script> -->
+
+        <!-- Option 2: Separate Popper and Bootstrap JS -->
+
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"
+            integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js"
+            integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous">
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+            integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+            crossorigin="anonymous"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+        <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+        <!--dx all -->
+        <script src="https://cdn3.devexpress.com/jslib/20.1.4/js/dx.all.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.2/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+</body>
+<script>
+    var dataSource = new DevExpress.data.DataSource({
+        store: {
+            type: "array",
+            key: "路燈編號",
+            data: data.features.map(e => e.properties).sort((a, b) => new Intl.Collator('en', {
+                numeric: true,
+                sensitivity: 'accent'
+            }).compare(a.路燈編號, b.路燈編號))
+        }
+    });
+    $(function () {
+        $("#gridContainer").dxDataGrid({
+            // dataSource: data.features.map(e => e.properties),
+            dataSource: dataSource,
+            columns: ["路燈編號", "校區", "燈具種類", "燈桿種類","迴路"],
+            showBorders: true,
+            hoverStateEnabled: true,
+            filterPanel: {
+                visible: true
+            },
+            focusedRowEnabled: true,
+            filterRow: {
+                visible: true,
+                //applyFilter: "auto"
+            },
+            headerFilter: {
+                visible: true
+            },
+            onCellClick: (e) => {
+                //console.log(e);
+                if (e.data) {
+                    map.flyTo({
+                        center: [Number(e.data.經度), Number(e.data.緯度)],
+                        zoom: 18,
+                        speed: 1, // make the flying slow
+                        curve: 1, // change the speed at which it zooms out
+                        essential: true
+                    });
+                    map.setFilter("bld2", ["==", "路燈編號", ""]);
+                    //console.log(e.features[0]);
+                    pointClick(e.data);
+                    map.setFilter("bld2", ["==", "路燈編號", e.data.路燈編號]);
+                };
+            },
+            export: {
+                enabled: true,
+                allowExportSelectedData: true
+            },
+            onExporting: function (e) {
+                var workbook = new ExcelJS.Workbook();
+                var worksheet = workbook.addWorksheet('嘉義大學路燈明細');
+
+                DevExpress.excelExporter.exportDataGrid({
+                    component: e.component,
+                    worksheet: worksheet,
+                    autoFilterEnabled: true
+                }).then(function () {
+                    // https://github.com/exceljs/exceljs#writing-xlsx
+                    workbook.xlsx.writeBuffer().then(function (buffer) {
+                        saveAs(new Blob([buffer], {
+                            type: 'application/octet-stream'
+                        }), 'Light.xlsx');
+                    });
+                });
+                e.cancel = true;
+            },
+        });
+    });
+</script>
+<script>
+    //inintal bootstrapTable
+    $('#table1').bootstrapTable({
+        data: []
+    })
+</script>
+<script>
+    // data.features.forEach((e, i) => {
+    //     e.properties.id = i+1;
+    // });
+</script>
+<script>
+    var fly1 = () => {
+        map.flyTo({
+            center: [120.484074, 23.467753], //23.467753, 120.484074
+            zoom: 17,
+        });
+        map.rotateTo(-57);
+    };
+    var fly2 = () => {
+        map.flyTo({
+            center: [120.42438960585848, 23.54335998046743], //23.54335998046743, 120.42438960585848
+            zoom: 17,
+        });
+        map.rotateTo(0);
+    };
+    var fly3 = () => {
+        map.flyTo({
+            center: [120.441996, 23.464029], //23.464029, 120.441996
+            zoom: 17,
+        });
+        map.rotateTo(0);
+    };
+    var fly4 = () => {
+        map.flyTo({
+            center: [120.458913, 23.488262], //23.488262, 120.458913
+            zoom: 18,
+        });
+        map.rotateTo(0);
+    };
+    var pointClick = e => {
+        //console.log(e.properties.pfile);
+        // var prop = e.properties;
+        var prop = e;
+
+        var showCol = ['路燈編號', '燈具種類', '燈桿種類', '迴路', '燈具瓦數', '經度', '緯度'];
+        var data = [];
+        showCol.forEach((e, i) => {
+            var obj = {
+                prop: e,
+                val: prop[e]
+            };
+            data.push(obj);
+        });
+        //console.log(data);
+        // t=[{prop:'經度',val:prop.經度}];
+        $('#table1').bootstrapTable('refreshOptions', {
+            data: data
+        })
+        var pfile = JSON.parse(prop.pfile);
+        if (pfile != undefined) {
+            var imgCollection = pfile.reduce((a, c) => {
+                var img =
+                    `<img class="photo" src="/路燈照片/${prop.校區}/${prop.pfolder}/${c}">`
+                //`<img class="photo" src="https://homesin.github.io/light/img/${prop.pfolder}/${c}">`
+                return a + img;
+            }, '');
+            //console.log(imgCollection);
+        };
+        $('#photoContainer').html(imgCollection);
+    };
+    var style1 = (url) => {
+        return {
+            'version': 8,
+            'sources': {
+                'raster-tiles': {
+                    'type': 'raster',
+                    'tiles': [
+                        url
+                    ],
+                    'tileSize': 256,
+                    'attribution': ''
+                }
+            },
+            'layers': [{
+                'id': 'simple-tiles',
+                'type': 'raster',
+                'source': 'raster-tiles',
+                'minzoom': 0,
+                'maxzoom': 24
+            }]
+        };
+    }
+    var size = 20;
+
+    // implementation of CustomLayerInterface to draw a pulsing dot icon on the map
+    // see https://docs.mapbox.com/mapbox-gl-js/api/#customlayerinterface for more info
+    var pulsingDot = {
+        width: size,
+        height: size,
+        data: new Uint8Array(size * size * 4),
+
+        // get rendering context for the map canvas when layer is added to the map
+        onAdd: function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.width;
+            canvas.height = this.height;
+            this.context = canvas.getContext('2d');
+        },
+
+        // called once before every frame where the icon will be used
+        render: function () {
+            var duration = 1000;
+            var t = (performance.now() % duration) / duration;
+
+            var radius = (size / 2) * 0.9;
+            var outerRadius = (size / 2) * 0.7 * t + radius;
+            var context = this.context;
+
+            // draw outer circle
+            context.clearRect(0, 0, this.width, this.height);
+            context.beginPath();
+            context.arc(
+                this.width / 2,
+                this.height / 2,
+                outerRadius,
+                0,
+                Math.PI * 2
+            );
+            context.fillStyle = 'rgba(255, 200, 200,' + (1 - t) + ')';
+            context.fill();
+
+            // draw inner circle
+            context.beginPath();
+            context.arc(
+                this.width / 2,
+                this.height / 2,
+                radius,
+                0,
+                Math.PI * 2
+            );
+            context.fillStyle = 'rgba(255, 100, 100, 1)';
+            context.strokeStyle = 'white';
+            context.lineWidth = 2 + 4 * (1 - t);
+            context.fill();
+            context.stroke();
+
+            // update this image's data with data from the canvas
+            this.data = context.getImageData(
+                0,
+                0,
+                this.width,
+                this.height
+            ).data;
+
+            // continuously repaint the map, resulting in the smooth animation of the dot
+            map.triggerRepaint();
+
+            // return `true` to let the map know that the image was updated
+            return true;
+        }
+    };
+    mapboxgl.accessToken =
+        'pk.eyJ1IjoiY2xlbWVudGlnb25ldCIsImEiOiJjazl2Z2hzcmkwYmF6M21zN3RqcHg5anU4In0.blXhwZzYBGSm6fJe0z0e-Q'
+    const map = new mapboxgl.Map({
+        container: "map",
+        zoom: 18,
+        maxZoom: 20,
+        minZoom: 12,
+        center: [120.484805, 23.467844],
+        //style: style1('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'), //google satellite
+        //style: style1('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'), //osm
+        //style:style1('http://rudy.tile.basecamp.tw/{z}/{x}/{y}.png'), //魯地圖 cors不能用
+        //style: 'mapbox://styles/mapbox/streets-v8',
+        //style: 'mapbox://styles/mapbox/streets-v10',
+        //style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/light-v10',
+        //style: 'mapbox://styles/mapbox/dark-v10',   
+        //style: 'mapbox://styles/mapbox/satellite-v9',         
+        //style: 'mapbox://styles/mapbox/outdoors-v11',   
+    });
+    map.on('load', function () {
+        // document.getElementById('t1').style.display = 'block';
+        // document.getElementById('t2').style.display = 'block';
+        //點下去閃亮的點
+        map.addImage('pulsing-dot', pulsingDot, {
+            pixelRatio: 2
+        });
+
+        //路燈點位資料
+        map.addSource('places', {
+            'type': 'geojson',
+            'data': data
+        });
+        map.addLayer({
+            'id': 'bld1',
+            'type': 'circle',
+            'source': 'places',
+            'paint': {
+                'circle-radius': 5,
+                'circle-color': '#3887be'
+            },
+            "minzoom": 17,
+            // layout: {
+            //     //'icon-image': 'art-gallery-11',
+            //     //'icon-padding': 0,
+            //     //'icon-allow-overlap': true,
+            // }
+            //"filter": ["==", "name", ""]
+        });
+        map.addLayer({
+            'id': 'bld2',
+            'type': 'symbol',
+            'source': 'places',
+            "minzoom": 17,
+            'layout': {
+                'icon-image': 'pulsing-dot',
+                "text-allow-overlap": true,
+            },
+            "filter": ["==", "路燈編號", ""]
+        });
+        map.addLayer({
+            'id': 'bldlabel',
+            'type': 'symbol',
+            'source': 'places',
+            "minzoom": 17, // Set zoom level to whatever suits your needs
+            "layout": {
+                "text-allow-overlap": true,
+                'text-field': ['get', '路燈編號'],
+                'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+                'text-offset': [0, 1],
+                'text-anchor': 'top',
+                "text-size": 10
+            }
+            //'filter': ['==', 'level', level]
+        });
+        //道路資料
+        map.addSource('road1', {
+            'type': 'geojson',
+            'data': 'road.geojson'
+        });
+        map.addLayer({
+            'id': 'road-line',
+            'type': 'line',
+            'source': 'road1',
+            'layout': {},
+            'paint': {
+                'line-color': 'black',
+                'line-width': 2,
+                'line-opacity': 0.3
+            }
+        });
+        //建物資料
+        map.addSource('building1', {
+            'type': 'geojson',
+            'data': 'building.geojson'
+        });
+        map.addLayer({
+            'id': 'building-fills',
+            'type': 'fill',
+            'source': 'building1',
+            'layout': {},
+            'paint': {
+                'fill-color': 'orange',
+                'fill-opacity': 0.3
+            }
+        });
+
+
+        map.on('click', 'bld1', e => {
+            map.setFilter("bld2", ["==", "路燈編號", ""]);
+            //console.log(e.features[0]);
+            pointClick(e.features[0].properties);
+            map.setFilter("bld2", ["==", "路燈編號", e.features[0].properties.路燈編號]);
+        });
+        map.on('mouseenter', 'bld1', e => {
+            //console.log(e);
+            map.getCanvas().style.cursor = 'pointer'
+            //map.setFilter("bld2", ["==", "路燈編號", e.features[0].properties.路燈編號]);
+        })
+        map.on('mouseleave', 'bld1', e => {
+            map.getCanvas().style.cursor = '';
+            //map.setFilter("bld2", ["==", "路燈編號", ""]);
+        })
+    });
+</script>
+
+</html>
