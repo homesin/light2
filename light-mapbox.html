@@ -17,6 +17,8 @@
     <!-- dx grid -->
     <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.1.4/css/dx.common.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.1.4/css/dx.light.css" />
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/magnific-popup.min.css">
 
     <!-- <script src="data.js"></script> -->
     <script src="data1.js"></script>
@@ -35,24 +37,16 @@
             /* background-color: blue; */
         }
 
-        #photoContainer {
-            /* background-color:red;  */
+        /*#photoContainer {
+            background-color:red; 
             height: 300px;
             width: 300px;
             /*flex-wrap: nowrap;*/
-            /* background-color: brown; */
-        }
+        /* background-color: brown; */
+        /* }*/
 
         .photo {
             padding: 1px;
-        }
-
-        #t1 {
-            display: none;
-        }
-
-        #t2 {
-            display: none;
         }
     </style>
 </head>
@@ -91,7 +85,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col">
                         <h1>屬性表</h1>
                         <table id='table1'>
                             <thead>
@@ -102,9 +96,9 @@
                             </thead>
                         </table>
                     </div>
-                    <div class="col-9">
+                    <div class="col">
                         <h1>現場照片</h1>
-                        <div class="d-flex flex-nowrap" id="photoContainer"></div>
+                        <div class="flex-wrap" id="photoContainer"></div>
                     </div>
                 </div>
             </div>
@@ -170,7 +164,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js">
+        </script>
 </body>
+<script>
+    $('#photoContainer').magnificPopup({
+        delegate: 'a',
+        type: 'image'
+    });
+</script>
+
 <script>
     var dataSource = new DevExpress.data.DataSource({
         store: {
@@ -186,7 +189,7 @@
         $("#gridContainer").dxDataGrid({
             // dataSource: data.features.map(e => e.properties),
             dataSource: dataSource,
-            columns: ["路燈編號", "校區", "燈具種類", "燈桿種類","迴路"],
+            columns: ["路燈編號", "校區", "燈具種類", "燈桿種類", "迴路"],
             showBorders: true,
             hoverStateEnabled: true,
             filterPanel: {
@@ -208,7 +211,7 @@
                         zoom: 18,
                         speed: 1, // make the flying slow
                         curve: 1, // change the speed at which it zooms out
-                        essential: true
+                        //essential: true
                     });
                     map.setFilter("bld2", ["==", "路燈編號", ""]);
                     //console.log(e.features[0]);
@@ -257,6 +260,9 @@
         map.flyTo({
             center: [120.484074, 23.467753], //23.467753, 120.484074
             zoom: 17,
+            speed: 1, // make the flying slow
+            curve: 1, // change the speed at which it zooms out
+            //essential: true
         });
         map.rotateTo(-57);
     };
@@ -264,6 +270,9 @@
         map.flyTo({
             center: [120.42438960585848, 23.54335998046743], //23.54335998046743, 120.42438960585848
             zoom: 17,
+            speed: 1, // make the flying slow
+            curve: 1, // change the speed at which it zooms out
+            //essential: false
         });
         map.rotateTo(0);
     };
@@ -271,6 +280,9 @@
         map.flyTo({
             center: [120.441996, 23.464029], //23.464029, 120.441996
             zoom: 17,
+            speed: 1, // make the flying slow
+            curve: 1, // change the speed at which it zooms out
+            //essential: true
         });
         map.rotateTo(0);
     };
@@ -278,6 +290,9 @@
         map.flyTo({
             center: [120.458913, 23.488262], //23.488262, 120.458913
             zoom: 18,
+            speed: 1, // make the flying slow
+            curve: 1, // change the speed at which it zooms out
+            //essential: true
         });
         map.rotateTo(0);
     };
@@ -304,7 +319,7 @@
         if (pfile != undefined) {
             var imgCollection = pfile.reduce((a, c) => {
                 var img =
-                    `<img class="photo" src="./路燈照片/${prop.校區}/${prop.pfolder}/${c}">`
+                    `<a href="./路燈照片/${prop.校區}/${prop.pfolder}/${c}"><img style="width:200px " class="photo" src="./路燈照片/${prop.校區}/${prop.pfolder}/${c}"></a>`
                 //`<img class="photo" src="https://homesin.github.io/light/img/${prop.pfolder}/${c}">`
                 return a + img;
             }, '');
